@@ -102,7 +102,7 @@ void PopMap::ReSize(unsigned int w, unsigned int h)
 }
 
 //Loading Map
-bool PopMap::LoadMap(char* path)
+bool PopMap::LoadMap(achar* path)
 {
 	UnloadMap();
 	Loaded=false;

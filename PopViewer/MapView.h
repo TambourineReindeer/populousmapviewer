@@ -35,6 +35,12 @@ using namespace std;
 #define _Set(x, y) void Set##y(x value) { this->y = value; }
 #define _GetSet(x, y) _Get(x, y); _Set(x,y)
 
+#ifdef UNICODE 
+#define achar wchar_t
+#else
+#define achar char
+#endif
+
 // Vertex Structure
 struct Vertex
 {
@@ -134,7 +140,7 @@ public:
 	_GetSet(float, YDistance);
 	_GetSet(float, HeightModifier);
 	// Loading map from file
-	bool LoadMap(char* path);
+	bool LoadMap(achar* path);
 	// Draw map in current opengl window
 	void Draw();
 	// Resize opengl window and refresh viewport

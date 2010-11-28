@@ -25,3 +25,12 @@
 #include <vector>
 #include "MapView.h"
 using namespace std;
+
+//O
+#define IDMenu_FILE WM_APP + 1
+#define IDMenu_HELP WM_APP + 2
+#define IDMenu_FILE_OPEN WM_APP + 3
+#define IDMenu_FILE_EXIT WM_APP + 4
+#define IDMenu_HELP_ABOUT WM_APP + 5
+#define IDMenu_HELP_HELP WM_APP + 6
+//
