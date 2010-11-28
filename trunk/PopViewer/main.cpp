@@ -38,6 +38,43 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	switch(msg)
 	{
+		//O
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case IDMenu_FILE_OPEN:
+			OPENFILENAME fn;      
+			TCHAR file[MAX_PATH]; 
+
+			ZeroMemory(&fn, sizeof(fn));
+			fn.lStructSize = sizeof(fn);
+			fn.hwndOwner = hwnd;
+			fn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+			fn.lpstrFile = file;
+			fn.lpstrFile[0] = '\0';
+			fn.nMaxFile = sizeof(file);
+			fn.lpstrFilter = L"Map\0Levl*.DAT\0";
+			fn.lpstrInitialDir = NULL;
+
+			if(GetOpenFileName(&fn))
+				if(map.LoadMap(file))
+					InvalidateRect(hwnd, NULL, true);
+			break;
+
+		case IDMenu_FILE_EXIT:
+			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+
+		case IDMenu_HELP_ABOUT:
+			MessageBox(hwnd, L"Populous Map Viewr 1.1", L"About", MB_OK);
+			break;
+
+		case IDMenu_HELP_HELP:
+			MessageBox(hwnd, L"Help : \nF:Change Fill Mode\nT : Toggle View Trees\nP : Toggle view player positions\nQ : Toggle Draw only lines\nW : Draw only points\nE : Toggle Shperical and Flat Mode\n(up,down)Arrow : Change Land Height\nS : Toggle view stone heads\nL : Lock rotation on x axis\n\n Colors : \nDark green : Trees\nBrown : StoneHeads\nBlue : Blue shaman startup position\nRed : Red shaman startup position\nGreen : Green shaman startup position\nYellow : Yellow shaman startup position", L"Help", MB_ICONINFORMATION | MB_OK);
+			break;
+		}
+		break;
+		//
 	case WM_LBUTTONDOWN:
 		mdown = true;
 		SetCapture(hwnd);
@@ -160,6 +197,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR CmdLines, int cmdshow)
 	RegisterClass(&wc);
 
 	HWND wnd = CreateWindow(L"clspopview", L"POPViewer (Press F1 for help)", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480, 0, 0, hInstance, 0);
+	
+	//O
+	//create main menu
+	HMENU hFileMenu = 0, hHelpMenu = 0;
+	HMENU hMenu = CreateMenu();
+	
+	AppendMenu(hMenu, MF_ENABLED | MF_POPUP, (UINT)(hFileMenu = CreatePopupMenu()), L"&File");
+	AppendMenu(hFileMenu, MF_ENABLED, IDMenu_FILE_OPEN, L"&Open");
+	AppendMenu(hFileMenu, MF_SEPARATOR, 0, L"");
+	AppendMenu(hFileMenu, MF_ENABLED, IDMenu_FILE_EXIT, L"&Exit");
+
+	AppendMenu(hMenu, MF_ENABLED | MF_POPUP, (UINT)(hHelpMenu = CreatePopupMenu()), L"&Help");
+	AppendMenu(hHelpMenu, MF_ENABLED, IDMenu_HELP_HELP, L"&Help");
+	AppendMenu(hHelpMenu, MF_ENABLED, IDMenu_HELP_ABOUT, L"&About");
+
+	SetMenu(wnd, hMenu);
+	//
+
 	ShowWindow(wnd, cmdshow);
 
 	glwin = new GLWin(wnd);
@@ -176,9 +231,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR CmdLines, int cmdshow)
 	map.ReSize(rc.right - rc.left, rc.bottom - rc.top);
 	map.Init();
 
-	if(!map.LoadMap("levl2131.dat"))
+	if(!map.LoadMap(L"levl2131.dat"))
 	{
-		PostQuitMessage(1);
+
 	}
 
 	MSG msg;
